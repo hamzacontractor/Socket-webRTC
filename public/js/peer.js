@@ -11,7 +11,7 @@ let localStream;
 
 
 
-navigator.mediaDevices.getDisplayMedia({ audio: true, video: true })
+navigator.mediaDevices.getUserMedia({ audio: true, video: true })
    .then(stream => {
       localStream = stream;
       localVideo.srcObject = localStream;
