@@ -4,7 +4,6 @@
   "description": "webRTC video conferrance with socket io in nodeJS",
   "main": "index.js",
   "dependencies": {
-    "devmon": "^0.0.1",
     "express": "^4.17.1",
     "socket.io": "^2.3.0"
   },
