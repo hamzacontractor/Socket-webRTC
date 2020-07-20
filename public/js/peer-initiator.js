@@ -105,5 +105,4 @@ function handleNewICECandidateMsg(incoming) {
 
 function handleTrackEvent(e) {
    remoteVideo.srcObject = e.streams[0];
-   remoteVideo.play();
 };

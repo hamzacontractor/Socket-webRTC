@@ -1,5 +1,5 @@
 const localVideo = document.getElementById('localVideo');
-localVideo.style = 'position:fixed; z-index:11; width:15vw; height:15vh; right:1vw; top:1vh';
+localVideo.style = 'position:fixed; z-index:11; width:18vw; height:20vh; right:1vw; top:1vh';
 
 const remoteVideo = document.getElementById('remoteVideo');
 remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:100vh; left:0; top:0';
@@ -107,5 +107,4 @@ function handleNewICECandidateMsg(incoming) {
 
 function handleTrackEvent(e) {
    remoteVideo.srcObject = e.streams[0];
-   remoteVideo.play();
 };
