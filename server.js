@@ -14,6 +14,10 @@ let peerInitiatorSocketID;
 
 app.use(express.static(__dirname + '/public'));
 
+app.get('/', (req, res) => {
+   res.sendFile(__dirname + '/public/index.html');
+});
+
 app.get('/start-video', (req, res) => {
    res.sendFile(__dirname + '/public/peer-initiate.html');
 });
@@ -57,5 +61,5 @@ io.on("connection", socket => {
 
 });
 
-
-server.listen(8000, () => console.log('server is running on port 8000'));
+const port = +process.env.PORT || 8000;
+server.listen(port, () => console.log(`Express Server started on port: ${port}`));
