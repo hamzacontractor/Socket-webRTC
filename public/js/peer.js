@@ -107,8 +107,7 @@ function handleNewICECandidateMsg(incoming) {
 
 function handleTrackEvent(e) {
    remoteVideo.srcObject = e.streams[0];
-   remoteVideo.attributes.add('muted', 'true');
    remoteVideo.play().then(() => {
-      remoteVideo.attributes.add('muted', 'false');
+      remoteVideo.muted = false;
    })
 };

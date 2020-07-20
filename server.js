@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
    res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/start-video', (req, res) => {
+app.get('/start-video-call', (req, res) => {
    res.sendFile(__dirname + '/public/peer-initiate.html');
 });
 
