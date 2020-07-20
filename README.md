@@ -1,2 +1,2 @@
 # Socket-webRTC
- webRTC video conferrance iwth socket io in nodeJS
+ webRTC video conferrance with socket io in nodeJS
