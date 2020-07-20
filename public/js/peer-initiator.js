@@ -2,7 +2,7 @@ const localVideo = document.getElementById('localVideo');
 localVideo.style = 'position:fixed; z-index:11; width:15vw; height:15vh; right:1vw; top:1vh';
 
 const remoteVideo = document.getElementById('remoteVideo');
-remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:100vh; left:0; top:0';
+remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:0; top:2vh';
 
 let peer;
 let socket;
@@ -105,4 +105,8 @@ function handleNewICECandidateMsg(incoming) {
 
 function handleTrackEvent(e) {
    remoteVideo.srcObject = e.streams[0];
+   remoteVideo.attributes.add('muted', 'true');
+   remoteVideo.play().then(() => {
+      remoteVideo.attributes.add('muted', 'false');
+   })
 };
