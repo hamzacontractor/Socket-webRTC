@@ -8,7 +8,8 @@ const io = socket(server);
 
 
 let isPeerConnected = false;
-let participants;
+let participants = [];
+let isConferanceActive = true;
 let peerInitiatorSocketID;
 
 
@@ -24,6 +25,10 @@ app.get('/start-video-call', (req, res) => {
 
 app.get('/connect', (req, res) => {
    res.sendFile(__dirname + '/public/peer.html');
+});
+
+app.get('/conference', (req, res) => {
+   res.sendFile(__dirname + '/public/conference.html');
 });
 
 
@@ -43,9 +48,17 @@ io.on("connection", socket => {
          socket.emit("connectPeer", peerInitiatorSocketID);
          socket.on("connected", () => socket.to(peerInitiatorSocketID).emit("peerConnected", socket.id));
          socket.on('disconnect', () => {
+            socket.to(peerInitiatorSocketID).emit('peerDisconnected', socket.id);
          });
       }
    });
+
+   socket.on('joinConference', name => {
+      if (isConferanceActive) {
+         socket.emit('connectAllPeer', participants)
+      }
+      participants.push(socket.id);
+   })
 
    socket.on("offer", payload => {
       io.to(payload.target).emit("offer", payload);
