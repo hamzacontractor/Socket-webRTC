@@ -22,7 +22,7 @@ function JoinConference() {
 
 function ShareCamera() {
    localStream.removeTrack(localStream.getVideoTracks()[0]);
-   navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then(stream => {
          localStream.addTrack(stream.getVideoTracks()[0]);
          localVideo.srcObject = localStream;
