@@ -9,7 +9,7 @@ const io = socket(server);
 
 let isPeerConnected = false;
 let participants = [];
-let isConferanceActive = true;
+let isConferanceActive = false;
 let peerInitiatorSocketID;
 
 
@@ -32,9 +32,10 @@ app.get('/conference', (req, res) => {
    res.sendFile(__dirname + '/public/conference.html');
 });
 
-app.get('/reset', (req, res) => {
+app.get('/start-confer', (req, res) => {
+   isConferanceActive = true;
    participants = [];
-   res.redirect('/conference');
+   res.redirect('/conference?name=hamza');
 });
 
 
@@ -60,10 +61,10 @@ io.on("connection", socket => {
    });
 
    socket.on('joinConference', () => {
-      // if (isConferanceActive) {
-      // }
-      socket.emit('connectAllPeer', participants)
-      participants.push(socket.id);
+      if (isConferanceActive) {
+         socket.emit('connectAllPeer', participants)
+         participants.push(socket.id);
+      }
 
       socket.on('disconnect', () => participants = participants.filter(v => v != socket.id));
    })
