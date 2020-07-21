@@ -16,7 +16,7 @@ let peerInitiatorSocketID;
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/start-video-call', (req, res) => {
+app.get('/start-vdo-call', (req, res) => {
    res.sendFile(__dirname + '/public/peer-initiate.html');
 });
 
@@ -35,7 +35,13 @@ app.get('/conference', (req, res) => {
 app.get('/start-confer', (req, res) => {
    isConferanceActive = true;
    participants = [];
-   res.redirect('/conference?name=hamza');
+   res.redirect('/conference?name=Hamza');
+});
+
+app.get('/stop-confer', (req, res) => {
+   isConferanceActive = false;
+   participants = [];
+   res.redirect('/');
 });
 
 
@@ -66,7 +72,10 @@ io.on("connection", socket => {
          participants.push(socket.id);
       }
 
-      socket.on('disconnect', () => participants = participants.filter(v => v != socket.id));
+      socket.on('disconnect', () => {
+         socket.broadcast.emit('peerDisconnected', socket.id);
+         participants = participants.filter(v => v != socket.id);
+      });
    })
 
    socket.on("offer", payload => {

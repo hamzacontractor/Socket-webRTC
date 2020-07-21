@@ -11,8 +11,8 @@ remoteVideos.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:
 let peer;
 let socket;
 let newUserName;
+let remoteSocketID;
 let localStream = new MediaStream();
-let localStreamID = localStream.id;
 
 
 const params = new URLSearchParams(window.location.search);
@@ -21,9 +21,9 @@ function JoinConference() {
 }
 
 function ShareCamera() {
-   localStream.removeTrack(localStream.getVideoTracks()[0]);
    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then(stream => {
+         localStream.removeTrack(localStream.getVideoTracks()[0]);
          localStream.addTrack(stream.getVideoTracks()[0]);
          localVideo.srcObject = localStream;
          localVideo.play();
@@ -49,6 +49,10 @@ navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
       socket.on("answer", Answer);
 
       socket.on("ice-candidate", handleNewICECandidateMsg);
+
+      socket.on("peerDisconnected", id => {
+         document.getElementById(id).remove();
+      });
 
    }).catch(e => console.error(e))
 
@@ -79,7 +83,7 @@ function createPeer(peerID) {
 
    peer.onicecandidate = e => handleICECandidateEvent(e, peerID);
    //peer.ontrack = e => console.log(e);
-   peer.onaddstream = handleStreamEvent;
+   peer.onaddstream = e => handleStreamEvent(e);
    //peer.onaddstream = () => console.log('Add Stream Fired.');
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
@@ -103,6 +107,7 @@ function handleNegotiationNeededEvent(peerID) {
 
 function RecieveCall(incomingOffer) {
    peer = createPeer();
+   remoteSocketID = incomingOffer.caller;
    newUserName = incomingOffer.callerName;
    peer.setRemoteDescription(new RTCSessionDescription(incomingOffer.sdp))
       .then(() => { localStream.getTracks().forEach(track => peer.addTrack(track, localStream)); })
@@ -119,6 +124,7 @@ function RecieveCall(incomingOffer) {
 }
 
 function Answer(messageAnswer) {
+   remoteSocketID = messageAnswer.caller;
    newUserName = messageAnswer.callerName;
    peer.setRemoteDescription(new RTCSessionDescription(messageAnswer.sdp))
       .catch(e => console.error(e));
@@ -143,7 +149,7 @@ function handleNewICECandidateMsg(incoming) {
 function AddVideoElement(name, stream) {
 }
 
-function handleStreamEvent(e) {
+function handleStreamEvent(e, peerID) {
    let nameSpan = document.createElement('span');
    nameSpan.style = 'padding:10px;';
    nameSpan.textContent = newUserName;
@@ -154,7 +160,7 @@ function handleStreamEvent(e) {
 
 
    let videoDiv = document.createElement('div');
-   videoDiv.id = socket.id;
+   videoDiv.id = remoteSocketID;
    videoDiv.style = 'position:relative; width:38vw; height:45vh; margin:1vh 1vw; box-shadow:0 0 2px 5px grey';
    videoDiv.appendChild(textDiv);
 
