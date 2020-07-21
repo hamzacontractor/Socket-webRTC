@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Peer</title>
+   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
    <video id=localVideo></video>
    <section id="remoteVideos"></section>
+   <section id="actions">
+      <button type="button" id="btnAudioToggle" class="my-5 btn-blue" onclick="ShareCamera();">Share Camera</button>
+      <button type="button" id="btnAudioToggle" class="my-5 btn-blue" onclick="ToggleAudio();">Disable Audio</button>
+      <button type="button" id="btnVideoToggle" class="my-5 btn-blue" onclick="ToggleVideo();">Disable Video</button>
+   </section>
 
    <script src="/socket.io/socket.io.js"></script>
    <script src="js/conference.js"></script>
 </body>
+
 </html>

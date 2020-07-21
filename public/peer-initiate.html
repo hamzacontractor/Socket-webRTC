@@ -8,6 +8,10 @@
 <body>
    <video id=localVideo></video>
    <video id="remoteVideo" muted></video>
+   <section id="actions">
+      <button type="button" id="btnAudioToggle" class="my-5 btn-blue">Mute</button>
+      <button type="button" id="btnVideoToggle" class="my-5 btn-blue">Close Video</button>
+   </section>
    
    <script src="/socket.io/socket.io.js"></script>
    <script src="js/peer-initiator.js"></script>

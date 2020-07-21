@@ -28,6 +28,10 @@ app.get('/conference', (req, res) => {
    res.sendFile(__dirname + '/public/conference.html');
 });
 
+app.get('/conference', (req, res) => {
+   res.sendFile(__dirname + '/public/conference.html');
+});
+
 
 
 io.on("connection", socket => {
@@ -50,24 +54,27 @@ io.on("connection", socket => {
       }
    });
 
-   socket.on('joinConference', name => {
-      if (isConferanceActive) {
-         socket.emit('connectAllPeer', participants)
-      }
+   socket.on('joinConference', () => {
+      // if (isConferanceActive) {
+      // }
+      socket.emit('connectAllPeer', participants)
       participants.push(socket.id);
+
+      socket.on('disconnect', () => participants = participants.filter(v => v != socket.id));
    })
 
    socket.on("offer", payload => {
-      io.to(payload.target).emit("offer", payload);
+      console.log(`Offer From: ${payload.callerName}`);
+      io.to(payload.target).emit("offer", payload)
    });
 
    socket.on("answer", payload => {
-      io.to(payload.target).emit("answer", payload);
+      console.log(`Answer From: ${payload.callerName}`);
+      io.to(payload.target).emit("answer", payload)
    });
 
-   socket.on("ice-candidate", incoming => {
-      io.to(incoming.target).emit("ice-candidate", incoming.candidate);
-   });
+   socket.on("ice-candidate", incoming => io.to(incoming.target).emit("ice-candidate", incoming.candidate));
+
 
 });
 

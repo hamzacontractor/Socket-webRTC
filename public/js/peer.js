@@ -4,6 +4,9 @@ localVideo.style = 'position:fixed; z-index:11; width:18vw; height:20vh; right:1
 const remoteVideo = document.getElementById('remoteVideo');
 remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:0; top:2vh';
 
+const actionScetion = document.getElementById('actions');
+actionScetion.style = 'position:fixed; z-index:11; width:18vw; height:75vh; right:1vw; top:22vh; display:flex; flex-wrap:wrap; flex-direction:column';
+
 let peer;
 let socket;
 let newUser;
