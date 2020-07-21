@@ -32,6 +32,11 @@ app.get('/conference', (req, res) => {
    res.sendFile(__dirname + '/public/conference.html');
 });
 
+app.get('/reset', (req, res) => {
+   participants = [];
+   res.redirect('/conference');
+});
+
 
 
 io.on("connection", socket => {
