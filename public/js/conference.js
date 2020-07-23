@@ -159,7 +159,7 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 function handleTrackEvent(e) {
-   console.log(e, e.streams[0].id);
+   console.log(e);
    if (document.getElementById(e.streams[0].id) === null) {
       let videoContainer = document.createElement('div');
       videoContainer.id = remoteSocketID;
@@ -180,38 +180,37 @@ function handleTrackEvent(e) {
       streamDiv.id = e.streams[0].id;
       videoContainer.appendChild(streamDiv);
 
-      AddVideoTrack(e.streams[0], streamDiv);
+      let remoteAudio = document.createElement('audio');
+      remoteAudio.id = audioStream.getVideoTracks()[0].id;
+      remoteAudio.style = 'width:inherit; height:inherit;';
+      remoteAudio.muted = true;
+
+      let remoteVideo = document.createElement('video');
+      remoteVideo.id = videoStream.getVideoTracks()[0].id;
+      remoteVideo.style = 'width:inherit; height:inherit;';
 
       remoteVideos.appendChild(videoContainer);
    }
-   else {
-      ModifyStrem(e.streams[0], document.getElementById(e.streams[0].id).querySelector('video'));
-   }
 
+   if (e.track.kind === 'video')
+      AddVideoTrack(e.streams[0], document.getElementById(e.streams[0].id).querySelector('video'));
+   if (e.track.kind === 'audio')
+      AddAudioTrack(e.streams[0], document.getElementById(e.streams[0].id).querySelector('audio'));
+
+}
+
+function AddAudioTrack(audioStream, streamDiv) {
+   console.log(audioStream);
+   remoteAudio.srcObject = audioStream;
+   remoteAudio.play().then(() => { remoteAudio.muted = false; });
+   streamDiv.appendChild(remoteAudio);
 }
 
 function AddVideoTrack(videoStream, streamDiv) {
    console.log(videoStream);
-   let remoteVideo = document.createElement('video');
-   remoteVideo.id = videoStream.getVideoTracks()[0].id;
-   remoteVideo.style = 'width:inherit; height:inherit;';
-   remoteVideo.muted = true;
    remoteVideo.srcObject = videoStream;
-   try {
-      remoteVideo.play().then(() => {
-         remoteVideo.muted = false;
-      })
-   } catch{ }
+   remoteVideo.play();
    streamDiv.appendChild(remoteVideo);
-}
-
-function ModifyStrem(videoStream, videoElement) {
-   videoElement.srcObject = videoStream;
-   try {
-      videoElement.play().then(() => {
-         videoElement.muted = false;
-      })
-   } catch{ }
 }
 
 socket.on("peerDisconnected", id => {
