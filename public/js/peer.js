@@ -10,7 +10,7 @@ actionScetion.style = 'position:fixed; z-index:11; width:18vw; height:75vh; righ
 let peer;
 let socket;
 let newUser;
-let localStream;
+let localStream = new MediaStream();
 
 socket = io.connect();
 
