@@ -34,6 +34,7 @@
       setTimeout(() => {
          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then().catch(e => console.error(e))
+         SetComponants();
       }, 50);
    </script>
 </body>
