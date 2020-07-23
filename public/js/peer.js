@@ -12,18 +12,6 @@ let socket;
 let newUser;
 let localStream;
 
-
-navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-   .then(stream => {
-      localStream = stream;
-      localVideo.srcObject = localStream;
-      localVideo.play();
-
-      socket.emit("join", 'peer');
-   })
-   .catch(e => console.error(e))
-
-
 socket = io.connect();
 
 socket.on('connectPeer', peerID => {
@@ -37,6 +25,70 @@ socket.on("offer", RecieveCall);
 socket.on("answer", Answer);
 
 socket.on("ice-candidate", handleNewICECandidateMsg);
+
+
+navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+   .then(stream => {
+      localStream = stream;
+      localVideo.srcObject = localStream;
+      localVideo.play();
+
+      socket.emit("join", 'peer');
+   })
+   .catch(e => console.error(e))
+
+
+function ShareScreen() {
+   navigator.mediaDevices.getDisplayMedia({ video: true })
+      .then(stream => {
+         if (!joined) {
+            localStream = stream;
+            localVideo.srcObject = localStream;
+            localVideo.play();
+            ToggleVideo();
+            JoinConference();
+         } else {
+            localStream.addTrack(stream.getVideoTracks()[0]);
+            SwitchToScreen();
+         }
+      }).catch(e => console.error(e))
+}
+
+function SwitchToScreen() {
+   localStream.getVideoTracks()[0].active = false;
+   localStream.getVideoTracks()[1].active = true;
+   document.getElementById('btnShareScreen').style.display = 'none';
+   document.getElementById('btnSwitchScreen').style.display = 'none';
+   document.getElementById('btnSwitchCamera').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
+}
+
+function SwitchToCamera() {
+   localStream.getVideoTracks()[0].active = true;
+   localStream.getVideoTracks()[1].active = false;
+   document.getElementById('btnSwitchCamera').style.display = 'none';
+   document.getElementById('btnSwitchScreen').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
+}
+
+function ToggleAudio() {
+   if (localStream.getAudioTracks())
+      localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+
+   if (localStream.getAudioTracks()[0].enabled)
+      document.getElementById('btnAudioToggle').textContent = 'Disable Audio';
+   else document.getElementById('btnAudioToggle').textContent = 'Enable Audio';
+}
+
+function ToggleVideo() {
+   localStream.getVideoTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+
+   if (localStream.getVideoTracks()[0].enabled)
+      document.getElementById('btnVideoToggle').textContent = 'Disable Audio';
+   else document.getElementById('btnVideoToggle').textContent = 'Enable Audio';
+}
 
 function createPeer(peerID) {
    const peer = new RTCPeerConnection({
