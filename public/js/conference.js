@@ -159,7 +159,6 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 function handleTrackEvent(e) {
-   console.log(e);
    if (document.getElementById(e.streams[0].id) === null) {
       let videoContainer = document.createElement('div');
       videoContainer.id = remoteSocketID;
@@ -180,13 +179,11 @@ function handleTrackEvent(e) {
       streamDiv.id = e.streams[0].id;
 
       let remoteAudio = document.createElement('audio');
-      remoteAudio.id = audioStream.getVideoTracks()[0].id;
       remoteAudio.style = 'width:inherit; height:inherit;';
       remoteAudio.muted = true;
       streamDiv.appendChild(remoteAudio);
 
       let remoteVideo = document.createElement('video');
-      remoteVideo.id = videoStream.getVideoTracks()[0].id;
       remoteVideo.style = 'width:inherit; height:inherit;';
       streamDiv.appendChild(remoteVideo);
 
