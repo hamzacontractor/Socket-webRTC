@@ -13,33 +13,30 @@ let newUser;
 let localStream;
 
 
-
 navigator.mediaDevices.getUserMedia({ audio: true, video: true })
    .then(stream => {
       localStream = stream;
       localVideo.srcObject = localStream;
       localVideo.play();
 
-      socket = io.connect();
       socket.emit("join", 'peer');
-
-      socket.on('connectPeer', peerID => {
-         callUser(peerID);
-         newUser = peerID;
-      });
-
-      socket.on("offer", RecieveCall);
-
-      socket.on("answer", Answer);
-
-      socket.on("ice-candidate", handleNewICECandidateMsg);
    })
    .catch(e => console.error(e))
 
-function callUser(peerID) {
+
+socket = io.connect();
+
+socket.on('connectPeer', peerID => {
+   newUser = peerID;
    peer = createPeer(peerID);
    localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
-}
+});
+
+socket.on("offer", RecieveCall);
+
+socket.on("answer", Answer);
+
+socket.on("ice-candidate", handleNewICECandidateMsg);
 
 function createPeer(peerID) {
    const peer = new RTCPeerConnection({

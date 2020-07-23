@@ -13,33 +13,55 @@ let newUser;
 let localStream;
 
 
+socket = io.connect();
+
+socket.on('connectPeer', peerID => { newUser = peerID; });
+
+socket.on("peerConnected", peerID => console.log(`Peer connected on socket: ${peerID}`));
+
+socket.on("offer", RecieveCall);
+
+socket.on("answer", Answer);
+
+socket.on("ice-candidate", handleNewICECandidateMsg);
+
 
 navigator.mediaDevices.getUserMedia({ audio: true, video: true })
    .then(stream => {
       localStream = stream;
       localVideo.srcObject = localStream;
       localVideo.play();
-
-      socket = io.connect();
-
-      socket.emit("join", 'peerInitator');
-
-      socket.on('connectPeer', peerID => {
-         newUser = peerID;
-      });
-
-      socket.on("peerConnected", peerID => console.log(`Peer connected on socket: ${peerID}`));
-
-      socket.on("offer", RecieveCall);
-
-      socket.on("answer", Answer);
-
-      socket.on("ice-candidate", handleNewICECandidateMsg);
+      socket.emit("join", 'peer.Initator');
    })
    .catch(e => console.error(e))
 
+function ShareScreen() {
+   navigator.mediaDevices.getDisplayMedia({ video: true })
+      .then(stream => {
+         localStream.addTrack(stream.getVideoTracks()[0]);
+         SwitchToScreen();
+      }).catch(e => console.error(e))
+}
 
-function createPeer() {
+function SwitchToScreen() {
+   localStream.getVideoTracks()[0].active = false;
+   localStream.getVideoTracks()[1].active = true;
+   document.getElementById('btnSwitchScreen').style.display = 'none';
+   document.getElementById('btnSwitchCamera').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
+}
+
+function SwitchToCamera() {
+   localStream.getVideoTracks()[0].active = true;
+   localStream.getVideoTracks()[1].active = false;
+   document.getElementById('btnSwitchCamera').style.display = 'none';
+   document.getElementById('btnSwitchScreen').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
+}
+
+function createPeer(peerID) {
    const peer = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.stunprotocol.org" },
       {
@@ -51,7 +73,7 @@ function createPeer() {
 
    peer.onicecandidate = handleICECandidateEvent;
    peer.ontrack = handleTrackEvent;
-   peer.onnegotiationneeded = () => handleNegotiationNeededEvent();
+   peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
    return peer;
 }
@@ -107,8 +129,9 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 function handleTrackEvent(e) {
+   console.log(e);
    remoteVideo.srcObject = e.streams[0];
    remoteVideo.play().then(() => {
-      remoteVideo.muted=false;
+      remoteVideo.muted = false;
    })
 };

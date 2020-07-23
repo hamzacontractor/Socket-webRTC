@@ -21,10 +21,18 @@ const params = new URLSearchParams(window.location.search);
 function ToggleAudio() {
    if (localStream.getAudioTracks())
       localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+
+   if (localStream.getAudioTracks()[0].enabled)
+      document.getElementById('btnAudioToggle').textContent = 'Disable Audio';
+   else document.getElementById('btnAudioToggle').textContent = 'Enable Audio';
 }
 
 function ToggleVideo() {
-   localStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+   localStream.getVideoTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+
+   if (localStream.getVideoTracks()[0].enabled)
+      document.getElementById('btnVideoToggle').textContent = 'Disable Audio';
+   else document.getElementById('btnVideoToggle').textContent = 'Enable Audio';
 }
 
 socket = io.connect();
