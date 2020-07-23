@@ -1,0 +1,532 @@
+
+
+/*********************************************************************************
+ *   INPUT COMPONANT
+ ********************************************************************************/
+div.input-box {
+    position: relative;
+    display: flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    width: 100%;
+    height: auto;
+    font-size: inherit;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    border-radius: .2em;
+    transition: .25s ease box-shadow,.5s ease-out transform;
+    /*background-color: white;*/
+}
+
+    div.input-box span, div.input-box section, div.input-box div {
+        cursor: inherit;
+    }
+
+    div.input-box > label {
+        position: absolute;
+        z-index: 0;
+        font-size: 1.25em;
+        font-weight: 600;
+        padding: 0;
+        transition: .5s ease all;
+        box-shadow: none;
+        outline: none;
+        transform-origin: left;
+        cursor: inherit;
+    }
+
+    div.input-box > div.input-container {
+        position: relative;
+        margin: 0;
+        padding: 1.75em 2em 1.4em 1.25em;
+        width: 100%;
+        font-size: 1em;
+        line-height: 1.4em;
+        background-color: transparent;
+        cursor: inherit;
+    }
+
+    div.input-box > .clear-btn {
+        position: absolute;
+        z-index: 2;
+        font-size: .75em;
+        color: var(--clr-red);
+        right: 0;
+        top: 0;
+        border: 0;
+        box-shadow: none;
+        cursor: pointer;
+    }
+
+        div.input-box > .clear-btn:hover {
+            text-decoration: underline;
+        }
+
+    div.input-box > div.input-container > input,
+    div.input-box > div.input-container > textarea,
+    div.input-box > div.input-container > select {
+        flex: 1;
+        -ms-flex: 1;
+        -webkit-flex: 1;
+        font: inherit;
+        font-weight: 500;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        outline: none;
+        resize: none;
+        background-color: transparent;
+    }
+
+    div.input-box > div.input-container > select {
+        background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right transparent;
+        -webkit-appearance: none;
+        padding: 1.75em 2em 1.4em 1.25em;
+        margin: -1.75em -1.5em -1.4em -1.25em;
+    }
+
+        div.input-box > div.input-container > select:disabled {
+            background: transparent;
+        }
+
+    div .input-box > div.input-container > input[type='file'] {
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        text-align: right;
+        opacity: 0;
+        outline: none;
+        background: black;
+        cursor: default;
+        display: block;
+    }
+
+    div.input-box > div.input-container > input[type="date"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        display: none;
+    }
+
+    /*div.input-box > div.input-container > input[type="date"]::-webkit-datetime-edit-day-field,
+    div.input-box > div.input-container > input[type="date"]::-webkit-datetime-edit-month-field,
+    div.input-box > div.input-container > input[type="date"]::-webkit-datetime-edit-year-field,
+    div.input-box > div.input-container > input[type="date"]::-webkit-datetime-edit-text {
+        -webkit-appearance: none;
+        display: none;
+    }*/
+
+    div.input-box > div.input-container > input[type="date"]::-webkit-calendar-picker-indicator,
+    div.input-box > div.input-container > input[type="date"]::-webkit-clear-button,
+    div.input-box > div.input-container > input[type="date"]::-ms-clear {
+        transform: scale(1.6);
+        margin: 0 .25em;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-appearance: button;
+        display: block;
+    }
+
+    div.input-box > div.input-container > input[type='number']::-webkit-inner-spin-button,
+    div.input-box > div.input-container > input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+
+
+    div.input-box > div.input-container > div.display-text {
+        position: relative;
+        flex: 1;
+        -ms-flex: 1;
+        -webkit-flex: 1;
+        text-align: center;
+    }
+
+    div.input-box > button.ext-btn {
+        position: absolute;
+        z-index: 2;
+        right: 0;
+        top: 0;
+        font-size: .75em;
+        border: 0;
+        box-shadow: none;
+        outline: none;
+    }
+
+        div.input-box > button.ext-btn:hover {
+            text-decoration: underline currentColor;
+            cursor: pointer;
+        }
+
+        div.input-box > button.ext-btn:active {
+            border-radius: 0;
+            text-decoration: underline red;
+            cursor: pointer;
+        }
+
+    div.input-box > button.eye-btn {
+        position: absolute;
+        z-index: 2;
+        right: 0;
+        top: 0;
+        border: 0;
+        box-shadow: none;
+        outline: none;
+    }
+
+    div.input-box .error-box {
+        position: absolute;
+        z-index: 0;
+        bottom: .35em;
+        left: 1em;
+        font-size: .7em;
+        font-weight: 400;
+        color: red;
+        width: 100%;
+    }
+
+    div.input-box .info-span {
+        position: absolute;
+        display: flex;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        z-index: 1;
+        right: 1.5em;
+        font-size: .75em;
+        cursor: inherit;
+        transition: .5s ease-out opacity;
+    }
+
+        div.input-box .info-span span {
+            cursor: inherit;
+        }
+
+    div.input-box .error-box .error-msg {
+        display: none;
+        float: left;
+        margin: 0 .5em;
+    }
+
+    div.input-box .required {
+        font-style: italic;
+    }
+
+    div.input-box .mandatory,
+    div.input-box .character-count {
+        position: absolute;
+        z-index: 0;
+        color: red;
+    }
+
+    div.input-box .mandatory {
+        left: .4em;
+        top: .2em;
+        font-size: 1.2em;
+        font-weight: 700;
+    }
+
+    div.input-box .character-count {
+        right: .5em;
+        bottom: .25em;
+        font-size: .8em;
+    }
+/********************************************************************************/
+
+
+/*********************************************************************************
+ *   MODAL
+ ********************************************************************************/
+.modal {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: rgba(0,0,0,.4);
+    font-size: 1em;
+    font-family: inherit;
+    transition: 200ms ease-in opacity;
+    opacity: 0;
+    z-index: -111;
+}
+
+.modal-container {
+    height: auto;
+    border-radius: .5em;
+    background-color: transparent;
+}
+
+@media(min-width:1px) {
+    .modal-container.small {
+        width: 80%;
+        margin: 15vmin 10%;
+    }
+
+    .modal-container {
+        width: 85%;
+        margin: 15vmin 7.5%;
+    }
+
+        .modal-container.large {
+            width: 90%;
+            margin: 15vmin 5%;
+        }
+}
+
+@media(min-width:540px) {
+
+    .modal-container.small {
+        width: 70%;
+        margin: 15vmin 12.5%;
+    }
+
+    .modal-container {
+        width: 75%;
+        margin: 15vmin 12.5%;
+    }
+
+        .modal-container.large {
+            width: 85%;
+            margin: 15vmin 7.5%;
+        }
+}
+
+@media(min-width:780px) {
+
+    .modal-container.small {
+        width: 55%;
+        margin: 20vmin 25%;
+    }
+
+    .modal-container {
+        width: 70%;
+        margin: 15vmin 20%;
+    }
+
+        .modal-container.large {
+            width: 80%;
+            margin: 10vmin 10%;
+        }
+}
+
+@media(min-width:1024px) {
+    .modal-container.small {
+        width: 40%;
+        margin: 25vmin 30%;
+    }
+
+    .modal-container {
+        width: 60%;
+        margin: 15vmin 20%;
+    }
+
+        .modal-container.large {
+            width: 90%;
+            margin: 5vmin 5%;
+        }
+}
+
+.modal-content {
+    border-radius: .5em;
+    display: flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+}
+
+.modal-head {
+    flex: 0 1 5%;
+    padding: .5em 1em;
+    display: flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    border-radius: .5em .5em 0 0;
+}
+
+.modal-title {
+    font-size: 1.4em;
+    margin: auto auto auto 0;
+}
+
+
+.modal-body {
+    flex: 1 1 auto;
+    padding: 1em 2em;
+    background-color: white;
+}
+
+.modal-foot {
+    flex: 0 1 5%;
+    padding: .5em 1em;
+    display: flex;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    border-radius: 0 0 .5em .5em;
+    background-color: white;
+}
+/********************************************************************************/
+
+
+
+
+
+
+
+/*********************************************************************************
+ *   CARDS
+ ********************************************************************************/
+.card, .card-flip {
+    position: relative;
+}
+
+    .card .card-face {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        font: inherit;
+    }
+
+    .card-flip .card-face {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transition: .65s ease all;
+        transform-style: preserve-3d;
+        transform: rotateY(0) translateX(0);
+    }
+
+        .card-flip .card-face:hover {
+            transform: rotateY(180deg) translateX(100%);
+            transform-origin: 100%;
+        }
+
+        .card-flip .card-face .front-face, .card-flip .card-face .back-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 1em;
+            backface-visibility: hidden;
+        }
+
+        .card-flip .card-face .back-face {
+            transform: rotateY(180deg);
+        }
+/************************************************************************************************/
+
+
+
+
+
+/*************************************************************************************************
+  *   SOUND RINGS
+  ***********************************************************************************************/
+@keyframes expand {
+    0% {
+        width: 0;
+        height: 0;
+        border-width: 0;
+    }
+
+    20% {
+        width: 80%;
+        height: 80%;
+        border-width: 2px;
+    }
+
+    40% {
+        width: 30%;
+        height: 30%;
+        border-width: 1px;
+    }
+
+    50% {
+        width: 100%;
+        height: 100%;
+        border-width: 3px;
+    }
+
+    60% {
+        width: 30%;
+        height: 30%;
+        border-width: 1px;
+    }
+
+    80% {
+        width: 80%;
+        height: 80%;
+        border-width: 3px;
+    }
+
+    100% {
+        width: 0;
+        height: 0;
+        border-width: 0;
+    }
+}
+
+.circle {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.circles {
+    position: absolute;
+    border-style: solid;
+    background-color: transparent;
+    border-radius: 50%;
+    margin: auto;
+    align-self: center;
+    border-width: 0;
+}
+
+.dot {
+    width: 0;
+    height: 0;
+    margin: auto;
+    border-radius: 50%;
+    border-width: 4px;
+    border-style: solid;
+    border-color: blue;
+}
+
+.circle-1 {
+    border-color: black;
+    animation: 9.3s ease infinite both 1.27s;
+}
+
+.circle-2 {
+    border-color: black;
+    animation: 7.2s ease infinite both .93s;
+}
+
+.circle-3 {
+    border-color: black;
+    animation: 5.3s ease infinite both .72s;
+}
+
+.circle-4 {
+    border-color: black;
+    animation: 4.3s ease infinite both .27s;
+}
+/**********************************************************************************************/

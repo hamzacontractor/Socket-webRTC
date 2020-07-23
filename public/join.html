@@ -5,19 +5,21 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Join Conference</title>
+   <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="css/componant.css">
 </head>
 
 <body>
 
    <section class="container">
       <div class="row-wrap">
-         <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6">
+         <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6 mx-auto p-10">
             <form action="/join" method="post">
                <div class="input-box">
                   <label>Name</label>
                   <input type="text" name="conferenceName" value="">
                </div>
-               <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6">
+               <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6 mx-auto p-10">
                   <button type="submit">Join Conference</button>
                </div>
             </form>
@@ -26,6 +28,8 @@
    </section>
 
 
+
+   <script src="js/componant.js"></script>
    <script>
       setTimeout(() => {
          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
