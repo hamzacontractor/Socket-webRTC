@@ -27,13 +27,19 @@ socket.on("answer", Answer);
 socket.on("ice-candidate", handleNewICECandidateMsg);
 
 
+let joined = false;
+function JoinVideoTalk() {
+   socket.emit("join", 'peer');
+   joined = true;
+}
+
 navigator.mediaDevices.getUserMedia({ audio: true, video: true })
    .then(stream => {
       localStream = stream;
       localVideo.srcObject = localStream;
       localVideo.play();
-
-      socket.emit("join", 'peer');
+      ToggleVideo()
+      JoinVideoTalk();
    })
    .catch(e => console.error(e))
 
@@ -45,19 +51,18 @@ function ShareScreen() {
             localStream = stream;
             localVideo.srcObject = localStream;
             localVideo.play();
-            ToggleVideo();
-            JoinConference();
+            JoinVideoTalk();
          } else {
             localStream.addTrack(stream.getVideoTracks()[0]);
             SwitchToScreen();
          }
+         document.getElementById('btnShareScreen').style.display = 'none';
       }).catch(e => console.error(e))
 }
 
 function SwitchToScreen() {
    localStream.getVideoTracks()[0].active = false;
    localStream.getVideoTracks()[1].active = true;
-   document.getElementById('btnShareScreen').style.display = 'none';
    document.getElementById('btnSwitchScreen').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'flex';
    localVideo.srcObject = localStream;
@@ -82,12 +87,16 @@ function ToggleAudio() {
    else document.getElementById('btnAudioToggle').textContent = 'Enable Audio';
 }
 
+let videoEnabled = true;
 function ToggleVideo() {
-   localStream.getVideoTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+   localStream.getVideoTracks().forEach(track => {
+      track.enabled = !track.enabled;
+      videoEnabled = track.enabled;
+   });
 
-   if (localStream.getVideoTracks()[0].enabled)
-      document.getElementById('btnVideoToggle').textContent = 'Disable Audio';
-   else document.getElementById('btnVideoToggle').textContent = 'Enable Audio';
+   if (videoEnabled)
+      document.getElementById('btnVideoToggle').textContent = 'Disable Video';
+   else document.getElementById('btnVideoToggle').textContent = 'Enable Video';
 }
 
 function createPeer(peerID) {
