@@ -7,7 +7,7 @@ actionScetion.style = 'position:fixed; z-index:11; width:18vw; height:75vh; righ
 const remoteVideos = document.getElementById('remoteVideos');
 remoteVideos.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:0; top:2vh; display:flex; flex-wrap:wrap; flex-direction:row;';
 
-
+let mediaAvailable = false;
 let peer;
 let socket;
 let newUserName;
@@ -17,44 +17,6 @@ let localStream = new MediaStream();
 
 const params = new URLSearchParams(window.location.search);
 
-function JoinConference() {
-}
-
-function ShareCamera() {
-   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-         localStream.removeTrack(localStream.getVideoTracks()[0]);
-         localStream.addTrack(stream.getVideoTracks()[0]);
-         localVideo.srcObject = localStream;
-         localVideo.play();
-      }).catch(e => console.error(e))
-}
-navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
-   .then(stream => {
-      localStream = stream;
-      localVideo.srcObject = localStream;
-      localVideo.play();
-
-      socket = io.connect();
-      socket.emit("joinConference");
-
-      socket.on('connectAllPeer', peerIDs => {
-         for (let i = 0; i < peerIDs.length; i++) {
-            setTimeout(() => { callUser(peerIDs[i]); }, 1000 * i);
-         }
-      });
-
-      socket.on("offer", RecieveCall);
-
-      socket.on("answer", Answer);
-
-      socket.on("ice-candidate", handleNewICECandidateMsg);
-
-      socket.on("peerDisconnected", id => {
-         document.getElementById(id).remove();
-      });
-
-   }).catch(e => console.error(e))
 
 function ToggleAudio() {
    if (localStream.getAudioTracks())
@@ -62,36 +24,74 @@ function ToggleAudio() {
 }
 
 function ToggleVideo() {
-   localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
+   localStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+}
+
+socket = io.connect();
+
+socket.on('connectAllPeer', peerIDs => {
+   for (let i = 0; i < peerIDs.length; i++) {
+      setTimeout(() => {
+         peer = createPeer(peerIDs[i]);
+         peer.addStream(localStream);
+      }, 1000 * i);
+   }
+});
+
+
+
+
+
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+   .then(stream => {
+      localStream = stream;
+      localVideo.srcObject = localStream;
+      localVideo.play();
+      JoinConference();
+   }).catch(e => console.error(e))
+
+function ShareScreen() {
+   navigator.mediaDevices.getDisplayMedia({ video: true })
+      .then(stream => {
+         localStream.addTrack(stream.getVideoTracks()[0]);
+         if (!joined) {
+            localVideo.srcObject = localStream;
+            localVideo.play();
+            JoinConference();
+         }
+
+      }).catch(e => console.error(e))
+}
+
+let joined = false;
+function JoinConference() {
+   socket.emit("joinConference");
+   joined = true;
 }
 
 
-function callUser(peerID) {
-   peer = createPeer(peerID);
-   peer.addStream(localStream);
-}
 
 function createPeer(peerID) {
    const peer = new RTCPeerConnection({
-      iceServers: [
-         { urls: "stun:stun.l.google.com:19302" },
-         { urls: "stun:stun1.l.google.com:19302" },
-         { urls: "stun:stun2.l.google.com:19302" },
-         { urls: "stun:stun3.l.google.com:19302" },
-         { urls: "stun:stun4.l.google.com:19302" }
-      ]
+      iceServers: [{ urls: "stun:stun.stunprotocol.org" },
+      {
+         urls: 'turn:numb.viagenie.ca',
+         credential: 'muazkh',
+         username: 'webrtc@live.com'
+      }]
    });
 
-   peer.onicecandidate = e => handleICECandidateEvent(e, peerID);
-   //peer.ontrack = e => console.log(e);
-   peer.onaddstream = e => handleStreamEvent(e);
-   //peer.onaddstream = () => console.log('Add Stream Fired.');
+   peer.onicecandidate = handleICECandidateEvent;
+   peer.ontrack = e => console.log(e);
+   peer.onaddstream = handleStreamEvent;
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
-   //console.log(peer);
    return peer;
 }
 
+
+socket.on("ice-candidate", handleNewICECandidateMsg);
 function handleNegotiationNeededEvent(peerID) {
    peer.createOffer().then(offer => {
       return peer.setLocalDescription(offer);
@@ -106,7 +106,8 @@ function handleNegotiationNeededEvent(peerID) {
    }).catch(e => console.error(e));
 }
 
-function RecieveCall(incomingOffer) {
+
+socket.on("offer", (incomingOffer) => {
    peer = createPeer();
    remoteSocketID = incomingOffer.caller;
    newUserName = incomingOffer.callerName;
@@ -122,8 +123,10 @@ function RecieveCall(incomingOffer) {
          }
          socket.emit("answer", payload);
       }).catch(e => console.error(e));
-}
+});
 
+
+socket.on("answer", Answer);
 function Answer(messageAnswer) {
    remoteSocketID = messageAnswer.caller;
    newUserName = messageAnswer.callerName;
@@ -131,10 +134,10 @@ function Answer(messageAnswer) {
       .catch(e => console.error(e));
 }
 
-function handleICECandidateEvent(e, id) {
+function handleICECandidateEvent(e) {
    if (e.candidate) {
       const payload = {
-         target: id,
+         target: remoteSocketID,
          candidate: e.candidate,
       }
       socket.emit("ice-candidate", payload);
@@ -147,10 +150,8 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 
-function AddVideoElement(name, stream) {
-}
-
-function handleStreamEvent(e, peerID) {
+function handleStreamEvent(e) {
+   console.log(e);
    let nameSpan = document.createElement('span');
    nameSpan.style = 'padding:10px;';
    nameSpan.textContent = newUserName;
@@ -166,14 +167,22 @@ function handleStreamEvent(e, peerID) {
    videoDiv.appendChild(textDiv);
 
    let remoteVideo = document.createElement('video');
-   remoteVideo.muted = true;
    remoteVideo.style = 'position:absolute; z-index:1; width:inherit; height:90%;';
+   remoteVideo.muted = true;
    remoteVideo.srcObject = e.stream;
-   remoteVideo.play().then(() => {
-      remoteVideo.muted = false;
-      videoDiv.appendChild(remoteVideo);
-   })
+   try {
+      remoteVideo.play().then(() => {
+         remoteVideo.muted = false;
+      })
+   } catch{ }
+   videoDiv.appendChild(remoteVideo);
 
    remoteVideos.appendChild(videoDiv);
 };
 
+
+
+
+socket.on("peerDisconnected", id => {
+   document.getElementById(id).remove();
+});

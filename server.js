@@ -5,6 +5,8 @@ const app = express();
 const server = http.createServer(app);
 const socket = require("socket.io");
 const io = socket(server);
+const bodyParser = require('body-parser');
+const url = require('url');
 
 
 let isPeerConnected = false;
@@ -15,6 +17,9 @@ let peerInitiatorSocketID;
 
 app.use(express.static(__dirname + '/public'));
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
 
 app.get('/start-vdo-call', (req, res) => {
    res.sendFile(__dirname + '/public/peer-initiate.html');
@@ -24,12 +29,21 @@ app.get('/connect', (req, res) => {
    res.sendFile(__dirname + '/public/peer.html');
 });
 
-app.get('/conference', (req, res) => {
-   res.sendFile(__dirname + '/public/conference.html');
+app.get('/join', (req, res) => {
+   res.sendFile(__dirname + '/public/join.html');
+});
+
+app.post('/join', (req, res) => {
+   if (req.body.conferenceName != "")
+      res.redirect('/conference?name=' + req.body.conferenceName);
+   else res.redirect('/join');
 });
 
 app.get('/conference', (req, res) => {
-   res.sendFile(__dirname + '/public/conference.html');
+   const queryObject = url.parse(req.url, true).query;
+   if (queryObject.name !== undefined && queryObject.name !== "")
+      res.sendFile(__dirname + '/public/conference.html');
+   else res.redirect('/join');
 });
 
 app.get('/start-confer', (req, res) => {
@@ -47,6 +61,7 @@ app.get('/stop-confer', (req, res) => {
 
 
 io.on("connection", socket => {
+   console.log(`Socket Connected: ${socket.id}`);
    socket.on("join", type => {
       console.log(`${socket.id} connected as ${type}`);
       if (!isPeerConnected && type === 'peerInitator') {
@@ -68,6 +83,7 @@ io.on("connection", socket => {
 
    socket.on('joinConference', () => {
       if (isConferanceActive) {
+         console.log(`Conf Joined by: ${socket.id}, Connecting: ${participants}`);
          socket.emit('connectAllPeer', participants)
          participants.push(socket.id);
       }
@@ -75,6 +91,7 @@ io.on("connection", socket => {
       socket.on('disconnect', () => {
          socket.broadcast.emit('peerDisconnected', socket.id);
          participants = participants.filter(v => v != socket.id);
+         console.log(`Disconnecting: ${socket.id}, Connected: ${participants}`);
       });
    })
 
@@ -88,7 +105,10 @@ io.on("connection", socket => {
       io.to(payload.target).emit("answer", payload)
    });
 
-   socket.on("ice-candidate", incoming => io.to(incoming.target).emit("ice-candidate", incoming.candidate));
+   socket.on("ice-candidate", incoming => {
+      console.log(`ICE event for:${incoming.target}`);
+      io.to(incoming.target).emit("ice-candidate", incoming.candidate);
+   });
 
 
 });

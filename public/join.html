@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Join Conference</title>
+</head>
+
+<body>
+
+   <section class="container">
+      <div class="row-wrap">
+         <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6">
+            <form action="/join" method="post">
+               <div class="input-box">
+                  <label>Name</label>
+                  <input type="text" name="conferenceName" value="">
+               </div>
+               <div class="col-md-12 col-tab-sm-10 col-tab-lg-8 col-desk-sm-6">
+                  <button type="submit">Join Conference</button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </section>
+
+
+   <script>
+      setTimeout(() => {
+         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then().catch(e => console.error(e))
+      }, 50);
+   </script>
+</body>
+
+</html>
