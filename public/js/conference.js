@@ -64,13 +64,29 @@ function ShareScreen() {
             localStream = stream;
             JoinConference();
          } else {
-            try { localStream.removeTrack(stream.getVideoTracks()[0]); } catch{ }
             localStream.addTrack(stream.getVideoTracks()[0]);
+            SwitchToScreen();
          }
          localVideo.srcObject = localStream;
          localVideo.play();
 
       }).catch(e => console.error(e))
+}
+
+function SwitchToScreen() {
+   let mediaTracks = localStream.getVideoTracks();
+   mediaTracks[0].active = false;
+   mediaTracks[1].active = true;
+   document.getElementById('btnSwitchScreen').style.display = 'none';
+   document.getElementById('btnSwitchCamera').style.display = 'flex';
+}
+
+function SwitchToCamera() {
+   let mediaTracks = localStream.getVideoTracks();
+   mediaTracks[0].active = true;
+   mediaTracks[1].active = false;
+   document.getElementById('btnSwitchCamera').style.display = 'none';
+   document.getElementById('btnSwitchScreen').style.display = 'flex';
 }
 
 let joined = false;
