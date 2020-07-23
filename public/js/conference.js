@@ -48,9 +48,6 @@ function ShareCamera() {
          if (!joined) {
             localStream = stream;
             JoinConference();
-         } else {
-            localStream.addTrack(stream.getVideoTracks()[0]);
-            localStream.addTrack(stream.getAudioTracks()[0]);
          }
          localVideo.srcObject = localStream;
          localVideo.play();
@@ -62,13 +59,13 @@ function ShareScreen() {
       .then(stream => {
          if (!joined) {
             localStream = stream;
+            localVideo.srcObject = localStream;
+            localVideo.play();
             JoinConference();
          } else {
             localStream.addTrack(stream.getVideoTracks()[0]);
             SwitchToScreen();
          }
-         localVideo.srcObject = localStream;
-         localVideo.play();
 
       }).catch(e => console.error(e))
 }
@@ -79,6 +76,8 @@ function SwitchToScreen() {
    mediaTracks[1].active = true;
    document.getElementById('btnSwitchScreen').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
 }
 
 function SwitchToCamera() {
@@ -87,6 +86,8 @@ function SwitchToCamera() {
    mediaTracks[1].active = false;
    document.getElementById('btnSwitchCamera').style.display = 'none';
    document.getElementById('btnSwitchScreen').style.display = 'flex';
+   localVideo.srcObject = localStream;
+   localVideo.play();
 }
 
 let joined = false;
