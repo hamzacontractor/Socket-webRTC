@@ -42,24 +42,33 @@ socket.on('connectAllPeer', peerIDs => {
 
 
 
-
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-   .then(stream => {
-      localStream = stream;
-      localVideo.srcObject = localStream;
-      localVideo.play();
-      JoinConference();
-   }).catch(e => console.error(e))
+function ShareCamera() {
+   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+         if (!joined) {
+            localStream = stream;
+            JoinConference();
+         } else {
+            localStream.addTrack(stream.getVideoTracks()[0]);
+            localStream.addTrack(stream.getAudioTracks()[0]);
+         }
+         localVideo.srcObject = localStream;
+         localVideo.play();
+      }).catch(e => console.error(e))
+}
 
 function ShareScreen() {
    navigator.mediaDevices.getDisplayMedia({ video: true })
       .then(stream => {
-         localStream.addTrack(stream.getVideoTracks()[0]);
          if (!joined) {
-            localVideo.srcObject = localStream;
-            localVideo.play();
+            localStream = stream;
             JoinConference();
+         } else {
+            try { localStream.removeTrack(stream.getVideoTracks()[0]); } catch{ }
+            localStream.addTrack(stream.getVideoTracks()[0]);
          }
+         localVideo.srcObject = localStream;
+         localVideo.play();
 
       }).catch(e => console.error(e))
 }
@@ -83,8 +92,8 @@ function createPeer(peerID) {
    });
 
    peer.onicecandidate = handleICECandidateEvent;
-   peer.ontrack = e => console.log(e);
-   peer.onaddstream = handleStreamEvent;
+   peer.ontrack = handleTrackEvent;
+   //peer.onaddstream = handleStreamEvent;
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
    return peer;
@@ -149,40 +158,64 @@ function handleNewICECandidateMsg(incoming) {
       .catch(e => console.error(e));
 }
 
+function handleTrackEvent(e) {
+   console.log(e, e.streams[0].id);
+   if (document.getElementById(e.streams[0].id) === null) {
+      let videoContainer = document.createElement('div');
+      videoContainer.id = remoteSocketID;
+      videoContainer.style = 'position:relative; width:38vw; height:45vh; margin:1vh 1vw; box-shadow:0 0 2px 5px grey';
 
-function handleStreamEvent(e) {
-   console.log(e);
-   let nameSpan = document.createElement('span');
-   nameSpan.style = 'padding:10px;';
-   nameSpan.textContent = newUserName;
+      let nameSpan = document.createElement('span');
+      nameSpan.style = 'padding:10px;';
+      nameSpan.textContent = newUserName;
 
-   let textDiv = document.createElement('div');
-   textDiv.style = 'position:absolute; z-index:10; right:0; bottom:0; background-color:rgba(0,0,0,.9); color: white;';
-   textDiv.appendChild(nameSpan);
+      let textDiv = document.createElement('div');
+      textDiv.style = 'position:absolute; z-index:10; right:0; bottom:0; background-color:rgba(0,0,0,.9); color: white;';
+      textDiv.appendChild(nameSpan);
+      videoContainer.appendChild(textDiv);
 
 
-   let videoDiv = document.createElement('div');
-   videoDiv.id = remoteSocketID;
-   videoDiv.style = 'position:relative; width:38vw; height:45vh; margin:1vh 1vw; box-shadow:0 0 2px 5px grey';
-   videoDiv.appendChild(textDiv);
+      let streamDiv = document.createElement('div');
+      streamDiv.style = 'position:relative; width:inherit; height:90%;';
+      streamDiv.id = e.streams[0].id;
+      videoContainer.appendChild(streamDiv);
 
+      AddVideoTrack(e.streams[0], streamDiv);
+
+      remoteVideos.appendChild(videoContainer);
+   }
+   else {
+      ModifyStrem(e.streams[0], document.getElementById(e.streams[0].id).querySelector('video'));
+   }
+
+}
+
+function AddVideoTrack(videoStream, streamDiv) {
+   console.log(videoStream);
    let remoteVideo = document.createElement('video');
-   remoteVideo.style = 'position:absolute; z-index:1; width:inherit; height:90%;';
+   remoteVideo.id = videoStream.getVideoTracks()[0].id;
+   remoteVideo.style = 'width:inherit; height:inherit;';
    remoteVideo.muted = true;
-   remoteVideo.srcObject = e.stream;
+   remoteVideo.srcObject = videoStream;
    try {
       remoteVideo.play().then(() => {
          remoteVideo.muted = false;
       })
    } catch{ }
-   videoDiv.appendChild(remoteVideo);
+   streamDiv.appendChild(remoteVideo);
+}
 
-   remoteVideos.appendChild(videoDiv);
-};
-
-
-
+function ModifyStrem(videoStream, videoElement) {
+   videoElement.srcObject = videoStream;
+   try {
+      videoElement.play().then(() => {
+         videoElement.muted = false;
+      })
+   } catch{ }
+}
 
 socket.on("peerDisconnected", id => {
    document.getElementById(id).remove();
 });
+
+setTimeout(ShareCamera, 100);
