@@ -178,17 +178,19 @@ function handleTrackEvent(e) {
       let streamDiv = document.createElement('div');
       streamDiv.style = 'position:relative; width:inherit; height:90%;';
       streamDiv.id = e.streams[0].id;
-      videoContainer.appendChild(streamDiv);
 
       let remoteAudio = document.createElement('audio');
       remoteAudio.id = audioStream.getVideoTracks()[0].id;
       remoteAudio.style = 'width:inherit; height:inherit;';
       remoteAudio.muted = true;
+      streamDiv.appendChild(remoteAudio);
 
       let remoteVideo = document.createElement('video');
       remoteVideo.id = videoStream.getVideoTracks()[0].id;
       remoteVideo.style = 'width:inherit; height:inherit;';
+      streamDiv.appendChild(remoteVideo);
 
+      videoContainer.appendChild(streamDiv);
       remoteVideos.appendChild(videoContainer);
    }
 
@@ -199,18 +201,16 @@ function handleTrackEvent(e) {
 
 }
 
-function AddAudioTrack(audioStream, streamDiv) {
+function AddAudioTrack(audioStream, audioElement) {
    console.log(audioStream);
-   remoteAudio.srcObject = audioStream;
-   remoteAudio.play().then(() => { remoteAudio.muted = false; });
-   streamDiv.appendChild(remoteAudio);
+   audioElement.srcObject = audioStream;
+   audioElement.play().then(() => { audioElement.muted = false; });
 }
 
-function AddVideoTrack(videoStream, streamDiv) {
+function AddVideoTrack(videoStream, videoElement) {
    console.log(videoStream);
-   remoteVideo.srcObject = videoStream;
-   remoteVideo.play();
-   streamDiv.appendChild(remoteVideo);
+   videoElement.srcObject = videoStream;
+   videoElement.play();
 }
 
 socket.on("peerDisconnected", id => {
