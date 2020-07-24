@@ -33,7 +33,7 @@ function JoinVideoTalk() {
    joined = true;
 }
 
-navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
    .then(stream => {
       localStream = stream;
       localVideo.srcObject = localStream;
