@@ -64,7 +64,7 @@ io.on("connection", socket => {
    console.log(`Socket Connected: ${socket.id}`);
    socket.on("join", type => {
       console.log(`${socket.id} connected as ${type}`);
-      if (!isPeerConnected && type === 'peer.Start') {
+      if (!isPeerConnected && type === 'peerStart') {
          isPeerConnected = true;
          peerInitiatorSocketID = socket.id;
          socket.on('disconnect', () => {

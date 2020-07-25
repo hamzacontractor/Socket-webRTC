@@ -27,7 +27,7 @@ socket.on("ice-candidate", handleNewICECandidateMsg);
 
 let joined = false;
 function JoinVideoTalk() {
-   socket.emit("join", 'peer.Start');
+   socket.emit("join", 'peerStart');
    joined = true;
 }
 
