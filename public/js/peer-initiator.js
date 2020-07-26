@@ -4,6 +4,8 @@ localVideo.style = 'position:fixed; z-index:11; width:18vw; height:20vh; right:1
 const remoteVideo = document.getElementById('remoteVideo');
 remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:0; top:2vh';
 
+const remoteAudio = document.getElementById('remoteAudio');
+
 const actionScetion = document.getElementById('actions');
 actionScetion.style = 'position:fixed; z-index:11; width:18vw; height:75vh; right:1vw; top:22vh; display:flex; flex-wrap:wrap; flex-direction:column';
 
@@ -114,8 +116,8 @@ function createPeer(peerID) {
    });
 
    peer.onicecandidate = handleICECandidateEvent;
-   peer.ontrack = e => console.log(e);
-   peer.onaddstream = e => handleTrackEvent(e);
+   peer.ontrack = handleTrackEvent;
+   //peer.onaddstream = e => handleTrackEvent(e);
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
    return peer;
@@ -173,9 +175,14 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 function handleTrackEvent(e) {
-   console.log(e);
-   remoteVideo.srcObject = e.stream;
-   remoteVideo.play().then(() => {
-      remoteVideo.muted = false;
-   })
+   if (e.track.kind === "audio") {
+      console.log(e);
+      remoteAudio.srcObject = e.stream;
+      remoteAudio.play();
+   }
+   if (e.track.kind === "video") {
+      console.log(e);
+      remoteVideo.srcObject = e.stream;
+      remoteVideo.play();
+   }
 };
