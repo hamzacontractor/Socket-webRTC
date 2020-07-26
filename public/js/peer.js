@@ -19,8 +19,8 @@ socket = io.connect();
 socket.on('connectPeer', peerID => {
    newUser = peerID;
    peer = createPeer(peerID);
-   peer.addStream(localStream);
-   //localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+   //peer.addStream(localStream);
+   localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
 });
 
 socket.on("offer", RecieveCall);
