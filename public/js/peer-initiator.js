@@ -177,12 +177,12 @@ function handleNewICECandidateMsg(incoming) {
 function handleTrackEvent(e) {
    if (e.track.kind === "audio") {
       console.log(e);
-      remoteAudio.srcObject = e.stream;
+      remoteAudio.srcObject = e.streams[0];
       remoteAudio.play();
    }
    if (e.track.kind === "video") {
       console.log(e);
-      remoteVideo.srcObject = e.stream;
+      remoteVideo.srcObject = e.streams[0];
       remoteVideo.play();
    }
 };
