@@ -65,13 +65,13 @@ io.on("connection", socket => {
    console.log(`Socket Connected: ${socket.id}`);
    socket.on("join", type => {
       console.log(`${socket.id} connected as ${type}`);
-      if (!isPeerConnected && type === 'peerStart') {
+      if (type === 'peerStart') {
          isPeerConnected = true;
          peerInitiatorSocketID = socket.id;
-         socket.on('disconnect', () => {
-            isPeerConnected = false;
-            peerInitiatorSocketID = '';
-         });
+         // socket.on('disconnect', () => {
+         //    isPeerConnected = false;
+         //    peerInitiatorSocketID = '';
+         // });
       }
       if (isPeerConnected && type === 'peer') {
          socket.emit("connectPeer", peerInitiatorSocketID);
