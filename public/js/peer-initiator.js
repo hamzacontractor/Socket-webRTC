@@ -100,7 +100,7 @@ function createPeer(peerID) {
    const peer = new RTCPeerConnection();
 
    peer.onicecandidate = handleICECandidateEvent;
-   peer.ontrack = handleTrackEvent;
+   peer.onaddstream = handleTrackEvent;
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
    return peer;
@@ -173,7 +173,7 @@ function handleNewICECandidateMsg(incoming) {
 
 function handleTrackEvent(e) {
    console.log(e);
-   remoteVideo.srcObject = e.streams[0];
+   remoteVideo.srcObject = e.stream;
    remoteVideo.play().then(() => {
       remoteVideo.muted = false;
    })
