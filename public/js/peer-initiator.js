@@ -114,6 +114,7 @@ function createPeer(peerID) {
    });
 
    peer.onicecandidate = handleICECandidateEvent;
+   peer.ontrack = e => console.log(e);
    peer.onaddstream = e => handleTrackEvent(e);
    peer.onnegotiationneeded = () => handleNegotiationNeededEvent(peerID);
 
