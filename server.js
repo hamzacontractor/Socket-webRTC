@@ -41,6 +41,7 @@ app.post('/join', (req, res) => {
 
 app.get('/conference', (req, res) => {
    const queryObject = url.parse(req.url, true).query;
+   if (!isConferanceActive) res.redirect('/');
    if (queryObject.name !== undefined && queryObject.name !== "")
       res.sendFile(__dirname + '/public/conference.html');
    else res.redirect('/join');
@@ -114,4 +115,4 @@ io.on("connection", socket => {
 });
 
 const port = +process.env.PORT || 8000;
-server.listen(port, () => console.log(`Express Server started on port: ${port}`));
+server.listen(port, () => console.log(`Web Confrence started on port: ${port}`));
