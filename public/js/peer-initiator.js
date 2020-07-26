@@ -173,13 +173,13 @@ function handleNewICECandidateMsg(incoming) {
 function handleTrackEvent(e) {
 
    if (e.track.kind === "audio") {
-      console.log(e);
+      console.log(e.streams);
       let remoteAudio = document.getElementById('remoteAudio');
       remoteAudio.srcObject = e.streams[0];
       remoteAudio.play();
    }
    if (e.track.kind === "video") {
-      console.log(e);
+      console.log(e.streams);
       let remoteVideo = document.getElementById('remoteVideo');
       remoteVideo.style = 'position:fixed; z-index:10; width:80vw; height:96vh; left:0; top:2vh';
       remoteVideo.srcObject = e.streams[0];
