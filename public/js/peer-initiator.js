@@ -51,6 +51,7 @@ function ConnectDisplay(){
       .then(stream => {
          localStream.addTrack(stream.getVideoTracks()[0]);
          localStream.addTrack(stream.getAudioTracks()[0]);
+         console.log(localStream, localStream.getTracks());
       }).catch(e => console.error(e))
 }
 
@@ -79,7 +80,6 @@ function ShareScreen() {
 }
 
 function SwitchToScreen() {
-   console.log(localStream);
    localStream.getVideoTracks()[0].enabled = false;
    localStream.getVideoTracks()[1].enabled = true;
    if(localStream.getAudioTracks()[1])
@@ -91,7 +91,6 @@ function SwitchToScreen() {
 }
 
 function SwitchToCamera() {
-   console.log(localStream);
    localStream.getVideoTracks()[0].enabled = true;
    localStream.removeTrack(localStream.getVideoTracks()[1]);
    if(localStream.getAudioTracks()[1])
