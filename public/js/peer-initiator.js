@@ -30,19 +30,23 @@ function JoinVideoTalk() {
    joined = true;
 }
 
+function ConnectVideo(){
 navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
       localStream.addTrack(stream.getVideoTracks()[0]);
    })
    .catch(e => console.error(e))
+}
 
+function ConnectAudio(){
 navigator.mediaDevices.getUserMedia({ audio: true })
    .then(stream => {
       localStream.addTrack(stream.getAudioTracks()[0]);
    })
    .catch(e => console.error(e))
+}
 
-function GetDisplayMedia(){
+function ConnectDisplay(){
    navigator.mediaDevices.getDisplayMedia({ video: true, audio:true })
       .then(stream => {
          localStream.addTrack(stream.getAudioTracks()[0]);
@@ -58,11 +62,18 @@ function DisplayLocalStream(){
       displayedLocalStream = true;
    }
 }
-setTimeout(DisplayLocalStream, 100);
+
+function Initiate(){
+   ConnectVideo();
+   ConnectAudio();
+   displayedLocalStream();
+   document.getElementById('btnSwitchCamera').style.display = 'none';
+   document.getElementById('btnShareScreen').style.display = 'flex';
+}
 
 
 function ShareScreen() {  
-   GetDisplayMedia();
+   ConnectDisplay();
    SwitchToScreen();
 }
 
