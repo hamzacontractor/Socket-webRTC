@@ -40,25 +40,25 @@ function JoinVideoTalk() {
 // }
 
 function ConnectVideo(){
-navigator.mediaDevices.getUserMedia({ video: true })
-   .then(stream => {
-      localStream.addTrack(stream.getVideoTracks()[0]);
-   })
-   .catch(e => console.error(e))
+   navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+         localStream.addTrack(stream.getVideoTracks()[0]);
+      })
+      .catch(e => console.error(e))
 }
 
 function ConnectAudio(){
-navigator.mediaDevices.getUserMedia({ audio: true })
-   .then(stream => {
-      localStream.addTrack(stream.getAudioTracks()[0]);
-   })
-   .catch(e => console.error(e))
+   navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+         localStream.addTrack(stream.getAudioTracks()[0]);
+      })
+      .catch(e => console.error(e))
 }
 
 function ConnectDisplay(){
    navigator.mediaDevices.getDisplayMedia({ video: true, audio:true })
       .then(stream => {
-         localStream.addTrack(stream.getAudioTracks()[0]);
+         localStream.addTrack(stream.getVideoTracks()[0]);
          localStream.addTrack(stream.getAudioTracks()[0]);
       }).catch(e => console.error(e))
 }
@@ -89,10 +89,10 @@ function ShareScreen() {
 
 function SwitchToScreen() {
    console.log(localStream);
-   localStream.getVideoTracks()[0].active = false;
-   localStream.getVideoTracks()[1].active = true;
+   localStream.getVideoTracks()[0].enabled = false;
+   localStream.getVideoTracks()[1].enabled = true;
    if(localStream.getAudioTracks()[1])
-      localStream.getAudioTracks()[1].active = true;
+      localStream.getAudioTracks()[1].enabled = true;
    document.getElementById('btnShareScreen').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'flex';
    localVideo.srcObject = localStream;
@@ -101,10 +101,10 @@ function SwitchToScreen() {
 
 function SwitchToCamera() {
    console.log(localStream);
-   localStream.getVideoTracks()[0].active = true;
-   localStream.removeTrack(localStream.getVideoTracks()[1]);
-   if(localStream.getAudioTracks()[1])
-      localStream.removeTrack(localStream.getAudioTracks()[1]);
+   localStream.getVideoTracks()[0].enabled = true;
+   localStream.removeTrack(localStream.getVideoTracks()[0]);
+   if(localStream.getAudioTracks()[0])
+      localStream.removeTrack(localStream.getAudioTracks()[0]);
    document.getElementById('btnSwitchCamera').style.display = 'none';
    document.getElementById('btnShareScreen').style.display = 'flex';
 }
