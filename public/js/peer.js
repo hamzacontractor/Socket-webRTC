@@ -32,11 +32,11 @@ function JoinVideoTalk() {
    joined = true;
 }
 
-let joined = false;
-function JoinVideoTalk() {
-   socket.emit("join", 'peerStart');
-   joined = true;
-}
+// let joined = false;
+// function JoinVideoTalk() {
+//    socket.emit("join", 'peerStart');
+//    joined = true;
+// }
 
 function ConnectVideo(){
 navigator.mediaDevices.getUserMedia({ video: true })
