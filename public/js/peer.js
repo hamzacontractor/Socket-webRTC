@@ -32,50 +32,82 @@ function JoinVideoTalk() {
    joined = true;
 }
 
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+let joined = false;
+function JoinVideoTalk() {
+   socket.emit("join", 'peerStart');
+   joined = true;
+}
+
+function ConnectVideo(){
+navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
-      localStream = stream;
-      localVideo.srcObject = localStream;
-      localVideo.play();
-      ToggleVideo()
-      JoinVideoTalk();
+      localStream.addTrack(stream.getVideoTracks()[0]);
    })
    .catch(e => console.error(e))
+}
 
+function ConnectAudio(){
+navigator.mediaDevices.getUserMedia({ audio: true })
+   .then(stream => {
+      localStream.addTrack(stream.getAudioTracks()[0]);
+   })
+   .catch(e => console.error(e))
+}
 
-function ShareScreen() {
-   navigator.mediaDevices.getDisplayMedia({ video: true })
+function ConnectDisplay(){
+   navigator.mediaDevices.getDisplayMedia({ video: true, audio:true })
       .then(stream => {
-         if (!joined) {
-            localStream = stream;
-            localVideo.srcObject = localStream;
-            localVideo.play();
-            JoinVideoTalk();
-         } else {
-            localStream.addTrack(stream.getVideoTracks()[0]);
-            SwitchToScreen();
-         }
-         document.getElementById('btnShareScreen').style.display = 'none';
+         localStream.addTrack(stream.getAudioTracks()[0]);
+         localStream.addTrack(stream.getAudioTracks()[0]);
       }).catch(e => console.error(e))
 }
 
+
+function DisplayLocalStream(){
+   if(displayedLocalStream == false){
+      localVideo.srcObject = localStream;
+      localVideo.play();
+      displayedLocalStream = true;
+   }
+}
+
+function Initiate(){
+   ConnectVideo();
+   ConnectAudio();
+   DisplayLocalStream();
+   document.getElementById('InitiateCall').style.display = 'none';
+   document.getElementById('btnSwitchCamera').style.display = 'none';
+   document.getElementById('btnShareScreen').style.display = 'flex';
+}
+
+
+function ShareScreen() {  
+   ConnectDisplay();
+   SwitchToScreen();
+}
+
 function SwitchToScreen() {
+   console.log(localStream);
    localStream.getVideoTracks()[0].active = false;
    localStream.getVideoTracks()[1].active = true;
-   document.getElementById('btnSwitchScreen').style.display = 'none';
+   if(localStream.getAudioTracks()[1])
+      localStream.getAudioTracks()[1].active = true;
+   document.getElementById('btnShareScreen').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'flex';
    localVideo.srcObject = localStream;
    localVideo.play();
 }
 
 function SwitchToCamera() {
+   console.log(localStream);
    localStream.getVideoTracks()[0].active = true;
-   localStream.getVideoTracks()[1].active = false;
+   localStream.removeTrack(localStream.getVideoTracks()[1]);
+   if(localStream.getAudioTracks()[1])
+      localStream.removeTrack(localStream.getAudioTracks()[1]);
    document.getElementById('btnSwitchCamera').style.display = 'none';
-   document.getElementById('btnSwitchScreen').style.display = 'flex';
-   localVideo.srcObject = localStream;
-   localVideo.play();
+   document.getElementById('btnShareScreen').style.display = 'flex';
 }
+
 
 function ToggleAudio() {
    if (localStream.getAudioTracks())
