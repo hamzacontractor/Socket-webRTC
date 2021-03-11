@@ -66,6 +66,8 @@ function DisplayLocalStream(){
 function Initiate(){
    ConnectVideo();
    ConnectAudio();
+   DisplayLocalStream();
+   document.getElementById('InitiateCall').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'none';
    document.getElementById('btnShareScreen').style.display = 'flex';
 }
