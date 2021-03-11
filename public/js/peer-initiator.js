@@ -9,6 +9,7 @@ let peer;
 let socket;
 let newUser;
 let localStream = new MediaStream();
+let displayedLocalStream;
 
 
 socket = io.connect();
@@ -31,45 +32,44 @@ function JoinVideoTalk() {
 
 navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
-      localStream.getVideoTracks()[0] = stream.getVideoTracks()[0];
-      localVideo.srcObject = localStream;
-      localVideo.play();
-      ToggleVideo()
-      JoinVideoTalk();
+      localStream.addTrack(stream.getVideoTracks()[0]);
    })
    .catch(e => console.error(e))
 
-   navigator.mediaDevices.getUserMedia({ audio: true })
+navigator.mediaDevices.getUserMedia({ audio: true })
    .then(stream => {
-      localStream.getAudioTracks()[0] = stream.getAudioTracks()[0];
-      localVideo.srcObject = localStream;
-      localVideo.play();
-      ToggleVideo()
-      JoinVideoTalk();
+      localStream.addTrack(stream.getAudioTracks()[0]);
    })
    .catch(e => console.error(e))
 
-
-function ShareScreen() {
-   navigator.mediaDevices.getDisplayMedia({ video: true })
+function GetDisplayMedia(){
+   navigator.mediaDevices.getDisplayMedia({ video: true, audio:true })
       .then(stream => {
-         if (!joined) {
-            localStream = stream;
-            localVideo.srcObject = localStream;
-            localVideo.play();
-            JoinVideoTalk();
-         } else {
-            localStream.addTrack(stream.getVideoTracks()[0]);
-            SwitchToScreen();
-         }
-         document.getElementById('btnShareScreen').style.display = 'none';
+         localStream.addTrack(stream.getAudioTracks()[0]);
+         localStream.addTrack(stream.getAudioTracks()[0]);
       }).catch(e => console.error(e))
+}
+
+function DisplayLocalStream(){
+   if(displayedLocalStream == false){
+      localVideo.srcObject = localStream;
+      localVideo.play();
+      displayedLocalStream = true;
+   }
+}
+
+
+function ShareScreen() {  
+   GetDisplayMedia();
+   SwitchToScreen();
 }
 
 function SwitchToScreen() {
    localStream.getVideoTracks()[0].active = false;
    localStream.getVideoTracks()[1].active = true;
-   document.getElementById('btnSwitchScreen').style.display = 'none';
+   if(localStream.getAudioTracks()[1])
+      localStream.getAudioTracks()[1].active = true;
+   document.getElementById('btnShareScreen').style.display = 'none';
    document.getElementById('btnSwitchCamera').style.display = 'flex';
    localVideo.srcObject = localStream;
    localVideo.play();
@@ -77,11 +77,11 @@ function SwitchToScreen() {
 
 function SwitchToCamera() {
    localStream.getVideoTracks()[0].active = true;
-   localStream.getVideoTracks()[1].active = false;
+   localStream.removeTrack(localStream.getVideoTracks()[1]);
+   if(localStream.getAudioTracks()[1])
+      localStream.removeTrack(localStream.getAudioTracks()[1]);
    document.getElementById('btnSwitchCamera').style.display = 'none';
-   document.getElementById('btnSwitchScreen').style.display = 'flex';
-   localVideo.srcObject = localStream;
-   localVideo.play();
+   document.getElementById('btnShareScreen').style.display = 'flex';
 }
 
 function ToggleAudio() {
