@@ -32,7 +32,7 @@ function JoinVideoTalk() {
 
 navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
-      localStream.addTrack(stream.getVideoTracks()[0]);
+      localStream.addTrack(stream.()[0]);
    })
    .catch(e => console.error(e))
 
@@ -67,6 +67,7 @@ function ShareScreen() {
 }
 
 function SwitchToScreen() {
+   console.log(localStream);
    localStream.getVideoTracks()[0].active = false;
    localStream.getVideoTracks()[1].active = true;
    if(localStream.getAudioTracks()[1])
@@ -78,6 +79,7 @@ function SwitchToScreen() {
 }
 
 function SwitchToCamera() {
+   console.log(localStream);
    localStream.getVideoTracks()[0].active = true;
    localStream.removeTrack(localStream.getVideoTracks()[1]);
    if(localStream.getAudioTracks()[1])
