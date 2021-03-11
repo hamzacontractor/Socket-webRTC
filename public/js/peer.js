@@ -9,6 +9,7 @@ let peer;
 let socket;
 let newUser;
 let localStream = new MediaStream();
+let displayedLocalStream = false;
 
 socket = io.connect();
 
