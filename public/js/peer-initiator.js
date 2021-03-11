@@ -32,7 +32,7 @@ function JoinVideoTalk() {
 
 navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
-      localStream.addTrack(stream.()[0]);
+      localStream.addTrack(stream.getVideoTracks()[0]);
    })
    .catch(e => console.error(e))
 
