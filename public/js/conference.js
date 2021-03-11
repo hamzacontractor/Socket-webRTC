@@ -28,7 +28,7 @@ function ToggleAudio() {
 }
 
 function ToggleVideo() {
-   localStream.getVideoTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+   localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
 
    if (localStream.getVideoTracks()[0].enabled)
       document.getElementById('btnVideoToggle').textContent = 'Disable Audio';
@@ -125,7 +125,6 @@ function createPeer(peerID) {
 }
 
 
-socket.on("ice-candidate", handleNewICECandidateMsg);
 function handleNegotiationNeededEvent(peerID) {
    peer.createOffer().then(offer => {
       return peer.setLocalDescription(offer);
@@ -160,13 +159,12 @@ socket.on("offer", (incomingOffer) => {
 });
 
 
-socket.on("answer", Answer);
-function Answer(messageAnswer) {
+socket.on("answer", function Answer(messageAnswer) {
    remoteSocketID = messageAnswer.caller;
    newUserName = messageAnswer.callerName;
    peer.setRemoteDescription(new RTCSessionDescription(messageAnswer.sdp))
       .catch(e => console.error(e));
-}
+});
 
 function handleICECandidateEvent(e) {
    if (e.candidate) {
@@ -178,10 +176,11 @@ function handleICECandidateEvent(e) {
    }
 }
 
-function handleNewICECandidateMsg(incoming) {
+
+socket.on("ice-candidate", function handleNewICECandidateMsg(incoming) {
    peer.addIceCandidate(new RTCIceCandidate(incoming))
       .catch(e => console.error(e));
-}
+});
 
 function handleTrackEvent(e) {
    console.log(e);

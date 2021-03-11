@@ -75,9 +75,12 @@ io.on("connection", socket => {
       }
       if (isPeerConnected && type === 'peer') {
          socket.emit("connectPeer", peerInitiatorSocketID);
-         socket.on("connected", () => socket.to(peerInitiatorSocketID).emit("peerConnected", socket.id));
+         socket.on("connected", () => 
+            socket.to(peerInitiatorSocketID)
+                  .emit("peerConnected", socket.id));
          socket.on('disconnect', () => {
-            socket.to(peerInitiatorSocketID).emit('peerDisconnected', socket.id);
+            socket.to(peerInitiatorSocketID)
+                  .emit('peerDisconnected', socket.id);
          });
       }
    });
@@ -97,18 +100,21 @@ io.on("connection", socket => {
    })
 
    socket.on("offer", payload => {
-      console.log(`Offer From: ${payload.callerName}`);
-      io.to(payload.target).emit("offer", payload)
+      console.log(`Offer From: ${payload.caller}`);
+      io.to(payload.target)
+        .emit("offer", payload)
    });
 
    socket.on("answer", payload => {
-      console.log(`Answer From: ${payload.callerName}`);
-      io.to(payload.target).emit("answer", payload)
+      console.log(`Answer From: ${payload.caller}`);
+      io.to(payload.target)
+        .emit("answer", payload)
    });
 
    socket.on("ice-candidate", incoming => {
       console.log(`ICE event for:${incoming.target}`);
-      io.to(incoming.target).emit("ice-candidate", incoming.candidate);
+      io.to(incoming.target)
+        .emit("ice-candidate", incoming.candidate);
    });
 
 

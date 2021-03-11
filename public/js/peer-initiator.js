@@ -96,19 +96,41 @@ function ToggleVideo() {
 
 function createPeer(peerID) {
    const peer = new RTCPeerConnection({
-      iceServers: [{
-         urls: "stun:stun.stunprotocol.org",
-         urls: "stun:stun.l.google.com:19302",
-         urls: "stun:stun1.l.google.com:19302",
-         urls: "stun:stun2.l.google.com:19302",
-         urls: "stun:stun3.l.google.com:19302",
-         urls: "stun:stun4.l.google.com:19302"
-      },
-      {
-         urls: 'turn:numb.viagenie.ca',
-         credential: 'muazkh',
-         username: 'webrtc@live.com'
-      }]
+      iceServers: [
+         { url: 'stun:stun01.sipphone.com' },
+         { url: 'stun:stun.ekiga.net' },
+         { url: 'stun:stun.fwdnet.net' },
+         { url: 'stun:stun.ideasip.com' },
+         { url: 'stun:stun.iptel.org' },
+         { url: 'stun:stun.rixtelecom.se' },
+         { url: 'stun:stun.schlund.de' },
+         { url: 'stun:stun.l.google.com:19302' },
+         { url: 'stun:stun1.l.google.com:19302' },
+         { url: 'stun:stun2.l.google.com:19302' },
+         { url: 'stun:stun3.l.google.com:19302' },
+         { url: 'stun:stun4.l.google.com:19302' },
+         { url: 'stun:stunserver.org' },
+         { url: 'stun:stun.softjoys.com' },
+         { url: 'stun:stun.voiparound.com' },
+         { url: 'stun:stun.voipbuster.com' },
+         { url: 'stun:stun.voipstunt.com' },
+         { url: 'stun:stun.voxgratia.org' },
+         { url: 'stun:stun.xten.com' },
+         {
+            url: 'turn:numb.viagenie.ca',
+            credential: 'muazkh',
+            username: 'webrtc@live.com'
+         },
+         {
+            url: 'turn:192.158.29.39:3478?transport=udp',
+            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            username: '28224511:1379330808'
+         },
+         {
+            url: 'turn:192.158.29.39:3478?transport=tcp',
+            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+            username: '28224511:1379330808'
+         }]
    });
 
    peer.onicecandidate = handleICECandidateEvent;
@@ -127,7 +149,7 @@ function handleNegotiationNeededEvent() {
       return peer.setLocalDescription(offer);
    }).then(() => {
       const payload = {
-         target: userID,
+         target: newUser,
          caller: socket.id,
          sdp: peer.localDescription
       };
@@ -137,6 +159,7 @@ function handleNegotiationNeededEvent() {
 
 function RecieveCall(incomingOffer) {
    peer = createPeer();
+   newUser = incomingOffer.caller;
    peer.setRemoteDescription(new RTCSessionDescription(incomingOffer.sdp))
       .then(() => { localStream.getTracks().forEach(track => peer.addTrack(track, localStream)); })
       .then(() => { return peer.createAnswer(); })
@@ -151,6 +174,7 @@ function RecieveCall(incomingOffer) {
 }
 
 function Answer(messageAnswer) {
+   newUser = messageAnswer.caller;
    peer.setRemoteDescription(new RTCSessionDescription(messageAnswer.sdp))
       .catch(e => console.error(e));
 }
@@ -171,7 +195,6 @@ function handleNewICECandidateMsg(incoming) {
 }
 
 function handleTrackEvent(e) {
-
    if (e.track.kind === "audio") {
       console.log(e.streams);
       let remoteAudio = document.getElementById('remoteAudio');
