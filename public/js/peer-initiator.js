@@ -66,7 +66,6 @@ function DisplayLocalStream(){
 function Initiate(){
    ConnectVideo();
    ConnectAudio();
-   displayedLocalStream();
    document.getElementById('btnSwitchCamera').style.display = 'none';
    document.getElementById('btnShareScreen').style.display = 'flex';
 }
