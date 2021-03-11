@@ -29,15 +29,26 @@ function JoinVideoTalk() {
    joined = true;
 }
 
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+navigator.mediaDevices.getUserMedia({ video: true })
    .then(stream => {
-      localStream = stream;
+      localStream.getVideoTracks()[0] = stream.getVideoTracks()[0];
       localVideo.srcObject = localStream;
       localVideo.play();
       ToggleVideo()
       JoinVideoTalk();
    })
    .catch(e => console.error(e))
+
+   navigator.mediaDevices.getUserMedia({ audio: true })
+   .then(stream => {
+      localStream.getAudioTracks()[0] = stream.getAudioTracks()[0];
+      localVideo.srcObject = localStream;
+      localVideo.play();
+      ToggleVideo()
+      JoinVideoTalk();
+   })
+   .catch(e => console.error(e))
+
 
 function ShareScreen() {
    navigator.mediaDevices.getDisplayMedia({ video: true })
