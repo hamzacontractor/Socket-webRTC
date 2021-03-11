@@ -50,6 +50,7 @@ function GetDisplayMedia(){
       }).catch(e => console.error(e))
 }
 
+
 function DisplayLocalStream(){
    if(displayedLocalStream == false){
       localVideo.srcObject = localStream;
@@ -57,6 +58,7 @@ function DisplayLocalStream(){
       displayedLocalStream = true;
    }
 }
+setTimeout(DisplayLocalStream, 100);
 
 
 function ShareScreen() {  
